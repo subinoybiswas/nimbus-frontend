@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-.placeholder-custom::placeholder {
-  color: #6b7280; /* This is the Tailwind CSS gray-500 color */
+
+.divider {
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  height: 1px;
+  background-color: silver;
+  flex-grow: 1;
 }

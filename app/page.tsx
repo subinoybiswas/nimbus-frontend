@@ -3,54 +3,68 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Home() {
   const [url, setUrl] = useState<string>("");
   const [formattedImage, setFormattedImage] = useState<string>("");
   const [status, setStatus] = useState<string>("normal");
   const input = useRef<HTMLInputElement>(null);
-
+  const { toast } = useToast();
   const backend = process.env.NEXT_PUBLIC_BACKEND_SERVER;
 
-  function handleSubmit() {
+  async function handleSubmit() {
     console.log(input.current?.value);
-    if (!input.current?.value) return;
     try {
-      const url = new URL(input.current?.value);
-      if (url.hostname !== backend) {
-        console.log(url.hostname);
+      if (!input.current?.value) throw new Error("No URL provided.");
+      const lurl = new URL(input.current?.value);
+      if (lurl.hostname !== backend) {
+        console.log(lurl.hostname);
         setStatus("error");
         return;
       }
       setStatus("success");
       setUrl(input.current?.value);
+      try {
+        const response = await fetch(input.current?.value); 
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const blob = await response.blob();
+        const localUrl = URL.createObjectURL(blob as Blob);
+        setFormattedImage(localUrl);
+      } catch (e) {
+        console.error("Error fetching image:", e);
+        toast({
+          duration: 2000,
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+        });
+        setStatus("error");
+      }
     } catch {
       setStatus("error");
+      toast({
+        duration: 2000,
+        variant: "destructive",
+        title: "You entered an invalid URL.",
+        description: "There was a problem with your request.",
+      });
       console.error("Invalid URL");
       return;
     }
   }
-  useEffect(() => {
-    if (!url || url == "") return;
-    fetch(url)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = URL.createObjectURL(blob);
-        setFormattedImage(url);
-      })
-      .catch((error) => {
-        console.error("Error fetching image:", error);
-        setStatus("error");
-      });
-  }, [url]);
+  const handleUpload = async () => {};
 
   return (
-    <main className="text-white flex min-h-screen flex-col items-center content-center justify-center p-24 bg-black/90 gap-5">
-      <div className="text-6xl my-8">Nimbus.</div>
+    <main className=" flex min-h-screen flex-col items-center content-center justify-center p-24 gap-5 border-2">
+      <div className="text-6xl my-8 font-bold">Nimbus.</div>
       <Input
         ref={input}
-        placeholder="try  https://nimbus.com/image.png?quality=100&width=200&height=200"
-        className={`w-1/2 rounded-xl h-10 placeholder:text-slate-600 bg-black/20 text-white ${
+        placeholder=" https://nimbus.com/image.png?quality=100"
+        className={`text-lg md:w-3/4 lg:w-1/2 w-full rounded-xl h-10 border-2 ${
           status === "error"
             ? `border-red-400 border-2`
             : status === "success"
@@ -63,17 +77,17 @@ export default function Home() {
           }
         }}
       />
-      <Button
-        type="submit"
-        className="text-black"
-        variant={"outline"}
-        onClick={handleSubmit}
-      >
+      <Button type="submit" variant={"outline"} onClick={handleSubmit}>
         Submit
+      </Button>
+      <div className="divider after::bg">OR</div>
+      <Button type="submit" variant={"outline"} onClick={handleUpload}>
+        Upload Image
       </Button>
       {formattedImage !== "" && (
         <>
           <Image
+            className="rounded-xl"
             src={formattedImage}
             alt="User provided"
             width={500}
@@ -87,6 +101,7 @@ export default function Home() {
           </a>
         </>
       )}
+      <Toaster />
     </main>
   );
 }
