@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
-
+import { ImagePicker } from "@/components/UploadZone/UploadZone";
 export default function Home() {
   const [url, setUrl] = useState<string>("");
   const [formattedImage, setFormattedImage] = useState<string>("");
@@ -27,7 +27,7 @@ export default function Home() {
       setStatus("success");
       setUrl(input.current?.value);
       try {
-        const response = await fetch(input.current?.value); 
+        const response = await fetch(input.current?.value);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -101,6 +101,7 @@ export default function Home() {
           </a>
         </>
       )}
+      <ImagePicker>Upload</ImagePicker>
       <Toaster />
     </main>
   );
