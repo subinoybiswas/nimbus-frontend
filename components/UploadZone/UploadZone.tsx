@@ -1,12 +1,12 @@
 import { _Object } from "@aws-sdk/client-s3";
-import { Group, Text, rem } from "@mantine/core";
+import { Group, Text, rem, Loader } from "@mantine/core";
 import { Button } from "../ui/button";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import useSWRMutation from "swr/mutation";
 import { useRef, useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 import React from "react";
 import { ClipboardCopy } from "lucide-react";
@@ -35,26 +35,28 @@ export function ImagePicker(props: {
   }) => void;
 }) {
   const { status: signedIn } = useSession();
-  // when uploading a document, there seem to be a slight delay, so wait ~1s
-  // before refreshing the list of documents `mutate("/api/documents")`.
-  let { trigger, data } = useSWRMutation("/api/upload", UploadZone);
-  const [uploaded, setUploaded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { trigger, data } = useSWRMutation("/api/upload", UploadZone);
   const input = useRef<HTMLInputElement>();
+
   if (signedIn !== "authenticated" && signedIn !== "loading") {
     return <Login />;
   } else {
+    if (loading) {
+      return (
+        <div className="min-h-full flex flex-col items-center content-center justify-center gap-2">
+          <Loader size={100} />
+          <Text size="xl">Uploading...</Text>
+        </div>
+      );
+    }
     if (!data) {
-      // if ((data as { url?: string; error?: string | null }).error) {
-      //   props.toast({
-      //     duration: 2000,
-      //     title: "Error Occured",
-      //     description: "You have exhausted your quota",
-      //   });
-      // }
       return (
         <Dropzone
-          onDrop={(files) => {
-            trigger({ files });
+          onDrop={async (files) => {
+            setLoading(true);
+            await trigger({ files });
+            setLoading(false);
           }}
           maxSize={5 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
@@ -135,7 +137,7 @@ export function ImagePicker(props: {
               })
             }
           >
-            <div className=" border-2 hover:border-gray-500 cursor-default text-center w-full rounded-lg px-2 py-1 flex flex-row gap-1">
+            <div className="border-2 hover:border-gray-500 cursor-default text-center w-full rounded-lg px-2 py-1 flex flex-row gap-1">
               {
                 (data as { url?: string; error?: string | null })
                   .url as unknown as string
