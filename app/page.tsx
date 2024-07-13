@@ -61,6 +61,7 @@ export default function Home() {
               description:
                 "You were making too many requests. Try again later.",
             });
+            return;
           }
           if (response.status === 404) {
             toast({
@@ -69,6 +70,7 @@ export default function Home() {
               title: "Uh oh! Something went wrong.",
               description: "Image not found.",
             });
+            return;
           }
           if (response.status === 500) {
             toast({
@@ -77,6 +79,7 @@ export default function Home() {
               title: "Uh oh! Something went wrong.",
               description: "Internal Server Error.",
             });
+            return;
           }
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
