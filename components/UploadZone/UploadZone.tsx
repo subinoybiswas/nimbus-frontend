@@ -11,6 +11,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import React from "react";
 import { ClipboardCopy } from "lucide-react";
 import { Login } from "../component/login";
+
 async function UploadZone(
   url: string,
   { arg }: { arg: { files: FileWithPath[] } }
@@ -33,19 +34,23 @@ export function ImagePicker(props: {
     description: string;
   }) => void;
 }) {
-  const { data: session, status: signedIn } = useSession();
+  const { status: signedIn } = useSession();
   // when uploading a document, there seem to be a slight delay, so wait ~1s
   // before refreshing the list of documents `mutate("/api/documents")`.
-  const { trigger, data } = useSWRMutation("/api/upload", UploadZone);
-  const [uploadedURL, setUploadedURL] = useState("");
+  let { trigger, data } = useSWRMutation("/api/upload", UploadZone);
+  const [uploaded, setUploaded] = useState(false);
   const input = useRef<HTMLInputElement>();
   if (signedIn !== "authenticated" && signedIn !== "loading") {
     return <Login />;
   } else {
-    if (
-      (data as unknown as string) === "" ||
-      (data as unknown as string) === undefined
-    ) {
+    if (!data) {
+      // if ((data as { url?: string; error?: string | null }).error) {
+      //   props.toast({
+      //     duration: 2000,
+      //     title: "Error Occured",
+      //     description: "You have exhausted your quota",
+      //   });
+      // }
       return (
         <Dropzone
           onDrop={(files) => {
@@ -105,31 +110,39 @@ export function ImagePicker(props: {
         </Dropzone>
       );
     } else {
+      if ((data as { url?: string; error?: string | null }).error) {
+        return (
+          <div className="min-h-full flex flex-col items-center content-center justify-center gap-2">
+            <div className="text-2xl m-3">Image Not Uploaded!</div>
+            <div>You have reached your upload quota of 5 uploads</div>
+          </div>
+        );
+      }
       return (
         <div className="min-h-full flex flex-col items-center content-center justify-center gap-2">
           <div className="text-2xl m-3">Image Uploaded</div>
           <CopyToClipboard
-            text={data as unknown as string}
+            text={
+              (data as { url?: string; error?: string | null })
+                .url as unknown as string
+            }
             onCopy={() =>
               props.toast({
                 duration: 2000,
                 title: "Copied Link Successfully",
-                description: data as unknown as string,
+                description: (data as { url?: string; error?: string | null })
+                  .url as unknown as string,
               })
             }
           >
             <div className=" border-2 hover:border-gray-500 cursor-default text-center w-full rounded-lg px-2 py-1 flex flex-row gap-1">
-              {data as unknown as string}
+              {
+                (data as { url?: string; error?: string | null })
+                  .url as unknown as string
+              }
               <ClipboardCopy size={24} />
             </div>
           </CopyToClipboard>
-          <Button
-            onClick={() => {
-              setUploadedURL("");
-            }}
-          >
-            Upload another
-          </Button>
         </div>
       );
     }
