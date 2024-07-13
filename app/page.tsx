@@ -116,7 +116,7 @@ export default function Home() {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="mb-5">Are you absolutely sure?</DialogTitle>
+            <DialogTitle className="mb-5">Upload Image</DialogTitle>
             <div className="border-2 border-dashed rounded-xl p-2 m-2 min-h-[50vh] flex flex-col items-center content-center justify-center">
               <ImagePicker />
             </div>
