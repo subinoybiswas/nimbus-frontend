@@ -10,14 +10,12 @@ import { Upload } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
 export default function Home() {
-  const [url, setUrl] = useState<string>("");
   const [formattedImage, setFormattedImage] = useState<string>("");
   const [status, setStatus] = useState<string>("normal");
   const input = useRef<HTMLInputElement>(null);
@@ -35,7 +33,7 @@ export default function Home() {
         return;
       }
       setStatus("success");
-      setUrl(input.current?.value);
+
       try {
         const response = await fetch(input.current?.value);
         if (!response.ok) {
@@ -118,7 +116,7 @@ export default function Home() {
           <DialogHeader>
             <DialogTitle className="mb-5">Upload Image</DialogTitle>
             <div className="border-2 border-dashed rounded-xl p-2 m-2 min-h-[50vh] flex flex-col items-center content-center justify-center">
-              <ImagePicker />
+              <ImagePicker toast={toast}/>
             </div>
           </DialogHeader>
         </DialogContent>
