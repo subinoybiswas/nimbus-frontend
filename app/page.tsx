@@ -48,9 +48,9 @@ export default function Home() {
 
       try {
         const response = await fetch(input.current?.value, {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-          },
+          method: "GET",
+
+          mode: "cors",
         });
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
