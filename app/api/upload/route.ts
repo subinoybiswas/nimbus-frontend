@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateRandomFilename } from "@/app/helpers/generateRandomFilename";
 import {
     S3Client,
-    ListObjectsCommand,
     PutObjectCommand,
 } from "@aws-sdk/client-s3";
 

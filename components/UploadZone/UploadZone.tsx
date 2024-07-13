@@ -25,11 +25,7 @@ async function UploadZone(
   return await res;
 }
 
-export function ImagePicker({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export function ImagePicker() {
   // when uploading a document, there seem to be a slight delay, so wait ~1s
   // before refreshing the list of documents `mutate("/api/documents")`.
   const { trigger } = useSWRMutation("/api/upload", UploadZone);
@@ -45,13 +41,14 @@ export function ImagePicker({
         gap="xl"
         mih={220}
         style={{ pointerEvents: "none" }}
+        className="flex flex-row items-center justify-center gap-2 content-center"
       >
         <Dropzone.Accept>
           <IconUpload
             style={{
-              width: rem(52),
-              height: rem(52),
-              color: "var(--mantine-color-blue-6)",
+              width: 100,
+              height: 100,
+              color: "#00c7b7",
             }}
             stroke={1.5}
           />
@@ -59,9 +56,9 @@ export function ImagePicker({
         <Dropzone.Reject>
           <IconX
             style={{
-              width: rem(52),
-              height: rem(52),
-              color: "var(--mantine-color-red-6)",
+              width: 100,
+              height: 100,
+              color: "#ff3860",
             }}
             stroke={1.5}
           />
@@ -69,9 +66,9 @@ export function ImagePicker({
         <Dropzone.Idle>
           <IconPhoto
             style={{
-              width: rem(52),
-              height: rem(52),
-              color: "var(--mantine-color-dimmed)",
+              width: 100,
+              height: 100,
+              color: "#000000",
             }}
             stroke={1.5}
           />

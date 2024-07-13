@@ -6,6 +6,16 @@ import { useEffect, useRef, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { ImagePicker } from "@/components/UploadZone/UploadZone";
+import { Upload } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 export default function Home() {
   const [url, setUrl] = useState<string>("");
   const [formattedImage, setFormattedImage] = useState<string>("");
@@ -56,7 +66,6 @@ export default function Home() {
       return;
     }
   }
-  const handleUpload = async () => {};
 
   return (
     <main className=" flex min-h-screen flex-col items-center content-center justify-center p-24 gap-5 border-2">
@@ -81,9 +90,6 @@ export default function Home() {
         Submit
       </Button>
       <div className="divider after::bg">OR</div>
-      <Button type="submit" variant={"outline"} onClick={handleUpload}>
-        Upload Image
-      </Button>
       {formattedImage !== "" && (
         <>
           <Image
@@ -101,7 +107,22 @@ export default function Home() {
           </a>
         </>
       )}
-      <ImagePicker>Upload</ImagePicker>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button>
+            <Upload className="mr-2 h-4 w-4" />
+            Upload Image
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="mb-5">Are you absolutely sure?</DialogTitle>
+            <div className="border-2 border-dashed rounded-xl p-2 m-2 min-h-[50vh] flex flex-col items-center content-center justify-center">
+              <ImagePicker />
+            </div>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
       <Toaster />
     </main>
   );
