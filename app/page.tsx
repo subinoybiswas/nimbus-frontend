@@ -53,6 +53,31 @@ export default function Home() {
           mode: "cors", // Ensure the request is made with CORS
         });
         if (!response.ok) {
+          if (response.status === 429) {
+            toast({
+              duration: 2000,
+              variant: "destructive",
+              title: "Uh oh! Something went wrong.",
+              description:
+                "You were making too many requests. Try again later.",
+            });
+          }
+          if (response.status === 404) {
+            toast({
+              duration: 2000,
+              variant: "destructive",
+              title: "Uh oh! Something went wrong.",
+              description: "Image not found.",
+            });
+          }
+          if (response.status === 500) {
+            toast({
+              duration: 2000,
+              variant: "destructive",
+              title: "Uh oh! Something went wrong.",
+              description: "Internal Server Error.",
+            });
+          }
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const blob = await response.blob();
