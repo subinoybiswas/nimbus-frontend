@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { ImagePicker } from "@/components/UploadZone/UploadZone";
@@ -14,12 +15,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User } from "lucide-react";
 export default function Home() {
   const [formattedImage, setFormattedImage] = useState<string>("");
   const [status, setStatus] = useState<string>("normal");
   const input = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { data: session, status: signedIn } = useSession();
   const backend = process.env.NEXT_PUBLIC_BACKEND_SERVER;
 
   async function handleSubmit() {
@@ -105,6 +117,41 @@ export default function Home() {
           </a>
         </>
       )}
+      <div className="fixed bottom-0 left-0 m-5">
+        {session ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Avatar>
+                <AvatarImage src={session?.user?.image as string} alt="User" />
+                <AvatarFallback>
+                  <User />
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  signOut();
+                }}
+              >
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button
+            size="icon"
+            onClick={() => {
+              signIn();
+            }}
+          >
+            <User />
+          </Button>
+        )}
+      </div>
+
       <Dialog>
         <DialogTrigger asChild>
           <Button>
@@ -116,7 +163,7 @@ export default function Home() {
           <DialogHeader>
             <DialogTitle className="mb-5">Upload Image</DialogTitle>
             <div className="border-2 border-dashed rounded-xl p-2 m-2 min-h-[50vh] flex flex-col items-center content-center justify-center">
-              <ImagePicker toast={toast}/>
+              <ImagePicker toast={toast} />
             </div>
           </DialogHeader>
         </DialogContent>

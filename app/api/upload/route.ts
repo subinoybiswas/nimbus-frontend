@@ -4,6 +4,7 @@ import {
     S3Client,
     PutObjectCommand,
 } from "@aws-sdk/client-s3";
+import { getSession } from "@/lib/auth"
 
 const Bucket = process.env.BUCKET;
 const s3 = new S3Client({
@@ -15,6 +16,11 @@ const s3 = new S3Client({
 });
 
 export async function POST(request: NextRequest) {
+    const session = await getSession();
+    if (!session) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    console.log("session", session);
     const formData = await request.formData();
     const files = [formData.getAll("file")[0]] as File[];
     const Key = generateRandomFilename(10) + "." + files[0].name.split('.')[1];
@@ -31,6 +37,6 @@ export async function POST(request: NextRequest) {
         console.error("Error uploading file:", error);
         return NextResponse.json({ error: "Error uploading file" }, { status: 500 });
     }
-
+    console.log("https://" + process.env.BACKEND_SERVER + "/" + Key);
     return NextResponse.json("https://" + process.env.BACKEND_SERVER + "/" + Key);
 }
