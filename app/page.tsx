@@ -50,7 +50,7 @@ export default function Home() {
         const response = await fetch(input.current?.value, {
           method: "GET",
 
-          mode: "cors",
+          mode: "cors", // Ensure the request is made with CORS
         });
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -59,14 +59,16 @@ export default function Home() {
         const localUrl = URL.createObjectURL(blob as Blob);
         setFormattedImage(localUrl);
       } catch (e) {
-        console.error("Error fetching image:", e);
-        toast({
-          duration: 2000,
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem with your request.",
-        });
-        setStatus("error");
+        if (e instanceof Error) {
+          toast({
+            duration: 2000,
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: e.message,
+          });
+          console.error("Error fetching image:", e);
+          setStatus("error");
+        }
       }
     } catch {
       setStatus("error");
