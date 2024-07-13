@@ -47,7 +47,11 @@ export default function Home() {
       setStatus("success");
 
       try {
-        const response = await fetch(input.current?.value);
+        const response = await fetch(input.current?.value, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
