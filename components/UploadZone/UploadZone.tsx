@@ -1,13 +1,14 @@
 import { _Object } from "@aws-sdk/client-s3";
-import { Button, Group, Text, rem } from "@mantine/core";
+import { Group, Text, rem } from "@mantine/core";
+import { Button } from "../ui/button";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import useSWRMutation from "swr/mutation";
 import { useRef, useState } from "react";
-import { Input } from "../ui/input";
+
 import React from "react";
-import Image from "next/image";
+import { ClipboardCopy } from "lucide-react";
 async function UploadZone(
   url: string,
   { arg }: { arg: { files: FileWithPath[] } }
@@ -33,9 +34,7 @@ export function ImagePicker(props: {
   // when uploading a document, there seem to be a slight delay, so wait ~1s
   // before refreshing the list of documents `mutate("/api/documents")`.
   const { trigger, data } = useSWRMutation("/api/upload", UploadZone);
-  const [uploadedURL, setUploadedURL] = useState(
-    "https://external-api-ten.vercel.app/image.png"
-  );
+  const [uploadedURL, setUploadedURL] = useState("");
   const input = useRef<HTMLInputElement>();
   if (uploadedURL === "") {
     return (
@@ -100,7 +99,7 @@ export function ImagePicker(props: {
     );
   } else {
     return (
-      <div className="min-h-full flex flex-col items-center content-center justify-center">
+      <div className="min-h-full flex flex-col items-center content-center justify-center gap-2">
         <div className="text-2xl m-3">Image Uploaded</div>
         <CopyToClipboard
           text={uploadedURL}
@@ -112,10 +111,18 @@ export function ImagePicker(props: {
             })
           }
         >
-          <div className=" border-2 hover:border-gray-500 cursor-default text-center w-full rounded-lg px-2 py-1">
+          <div className=" border-2 hover:border-gray-500 cursor-default text-center w-full rounded-lg px-2 py-1 flex flex-row gap-1">
             {uploadedURL}
+            <ClipboardCopy size={24} />
           </div>
         </CopyToClipboard>
+        <Button
+          onClick={() => {
+            setUploadedURL("");
+          }}
+        >
+          Upload another
+        </Button>
       </div>
     );
   }
