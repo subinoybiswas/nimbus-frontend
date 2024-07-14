@@ -1,8 +1,8 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { RotateCcw } from "lucide-react";
-import { useRef, useState } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
@@ -28,6 +28,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "lucide-react";
 export default function Home() {
   const [formattedImage, setFormattedImage] = useState<string>("");
+  const [remoteUrl, setRemoteUrl] = useState<string>("");
   const [status, setStatus] = useState<string>("normal");
   const input = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -85,7 +86,8 @@ export default function Home() {
         }
         const blob = await response.blob();
         const localUrl = URL.createObjectURL(blob as Blob);
-        setFormattedImage(input.current?.value);
+        setRemoteUrl(input.current?.value);
+        setFormattedImage(localUrl);
       } catch (e) {
         if (e instanceof Error) {
           toast({
@@ -130,33 +132,21 @@ export default function Home() {
           }
         }}
       />
-
-      {formattedImage !== "" ? (
+      <Button type="submit" variant={"outline"} onClick={handleSubmit}>
+        Submit
+      </Button>
+      <div className="divider after::bg">OR</div>
+      {formattedImage !== "" && remoteUrl !== "" ? (
         <>
-          <img crossorigin="anonymous" src={formattedImage} alt="Image" />
-          <a href={formattedImage} download className="download-button">
+          <img src={formattedImage} alt="Image" />
+          <a href={remoteUrl} download className="download-button">
             <Button variant={"secondary"} className="bg-gray-800 text-white">
               Download
             </Button>
           </a>
-          <Button
-            type="submit"
-            variant={"outline"}
-            onClick={() => {
-              setFormattedImage("");
-            }}
-            size="icon"
-          >
-            <RotateCcw />
-          </Button>
         </>
       ) : (
-        <>
-          <Button type="submit" variant={"outline"} onClick={handleSubmit}>
-            Submit
-          </Button>
-          <div className="divider after::bg">OR</div>
-        </>
+        <></>
       )}
       <div className="fixed bottom-0 left-0 m-5">
         {session ? (
