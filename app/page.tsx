@@ -133,7 +133,7 @@ export default function Home() {
 
       {formattedImage !== "" ? (
         <>
-          <img src={formattedImage} alt="Image" />
+          <img crossorigin="anonymous" src={formattedImage} alt="Image" />
           <a href={formattedImage} download className="download-button">
             <Button variant={"secondary"} className="bg-gray-800 text-white">
               Download
