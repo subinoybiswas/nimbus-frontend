@@ -85,7 +85,7 @@ export default function Home() {
         }
         const blob = await response.blob();
         const localUrl = URL.createObjectURL(blob as Blob);
-        setFormattedImage(localUrl);
+        setFormattedImage(input.current?.value);
       } catch (e) {
         if (e instanceof Error) {
           toast({
