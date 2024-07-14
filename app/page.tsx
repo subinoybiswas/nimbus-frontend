@@ -1,7 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Toaster } from "@/components/ui/toaster";
@@ -23,7 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import ReactLoading from "react-loading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "lucide-react";
 export default function Home() {
@@ -33,6 +32,7 @@ export default function Home() {
   const input = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { data: session, status: signedIn } = useSession();
+  const [loading, setLoading] = useState<boolean>(false);
   const backend = process.env.NEXT_PUBLIC_BACKEND_SERVER;
 
   async function handleSubmit() {
@@ -48,6 +48,9 @@ export default function Home() {
       setStatus("success");
 
       try {
+        setRemoteUrl("");
+        setFormattedImage("");
+        setLoading(true);
         const response = await fetch(input.current?.value, {
           method: "GET",
 
@@ -62,6 +65,7 @@ export default function Home() {
               description:
                 "You were making too many requests. Try again later.",
             });
+            setLoading(false);
             return;
           }
           if (response.status === 404) {
@@ -71,6 +75,8 @@ export default function Home() {
               title: "Uh oh! Something went wrong.",
               description: "Image not found.",
             });
+            setLoading(false);
+
             return;
           }
           if (response.status === 500) {
@@ -80,6 +86,8 @@ export default function Home() {
               title: "Uh oh! Something went wrong.",
               description: "Internal Server Error.",
             });
+            setLoading(false);
+
             return;
           }
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -98,6 +106,7 @@ export default function Home() {
           });
           console.error("Error fetching image:", e);
           setStatus("error");
+          setLoading(false);
         }
       }
     } catch {
@@ -108,6 +117,7 @@ export default function Home() {
         title: "You entered an invalid URL.",
         description: "There was a problem with your request.",
       });
+      setLoading(false);
       console.error("Invalid URL");
       return;
     }
@@ -136,7 +146,9 @@ export default function Home() {
         Submit
       </Button>
       <div className="divider after::bg">OR</div>
-      {formattedImage !== "" && remoteUrl !== "" ? (
+      {loading ? (
+        <ReactLoading type={"spin"} color="#000" />
+      ) : formattedImage !== "" && remoteUrl !== "" ? (
         <>
           <img src={formattedImage} alt="Image" />
           <a href={remoteUrl} download className="download-button">
