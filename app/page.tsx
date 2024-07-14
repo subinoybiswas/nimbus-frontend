@@ -1,8 +1,8 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { RotateCcw } from "lucide-react";
+import { useRef, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
@@ -130,25 +130,32 @@ export default function Home() {
           }
         }}
       />
-      <Button type="submit" variant={"outline"} onClick={handleSubmit}>
-        Submit
-      </Button>
-      <div className="divider after::bg">OR</div>
-      {formattedImage !== "" && (
+
+      {formattedImage !== "" ? (
         <>
-          <Image
-            className="rounded-xl"
-            src={formattedImage}
-            alt="User provided"
-            width={500}
-            height={500}
-            onError={() => {}}
-          />
+          <img src={formattedImage} alt="Image" />
           <a href={formattedImage} download className="download-button">
             <Button variant={"secondary"} className="bg-gray-800 text-white">
               Download
             </Button>
           </a>
+          <Button
+            type="submit"
+            variant={"outline"}
+            onClick={() => {
+              setFormattedImage("");
+            }}
+            size="icon"
+          >
+            <RotateCcw />
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button type="submit" variant={"outline"} onClick={handleSubmit}>
+            Submit
+          </Button>
+          <div className="divider after::bg">OR</div>
         </>
       )}
       <div className="fixed bottom-0 left-0 m-5">
