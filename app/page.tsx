@@ -96,6 +96,7 @@ export default function Home() {
         const localUrl = URL.createObjectURL(blob as Blob);
         setRemoteUrl(input.current?.value);
         setFormattedImage(localUrl);
+        setLoading(false);
       } catch (e) {
         if (e instanceof Error) {
           toast({
