@@ -8,7 +8,7 @@ import { getSession } from "@/lib/auth"
 import { db } from "@/lib/db";
 import { User } from "@/schema/users";
 import { eq } from "drizzle-orm";
-import { error } from "console";
+
 
 const Bucket = process.env.BUCKET;
 const s3 = new S3Client({
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
 
             await s3.send(new PutObjectCommand({ Bucket, Key, Body }));
 
-            return NextResponse.json({ url: Key }, { status: 200 });
+            return NextResponse.json({ url: "https://" + process.env.BACKEND_SERVER + "/" + Key }, { status: 200 });
         } catch (error) {
             console.error("Error uploading file:", error);
             return NextResponse.json({ error: "Error uploading file" }, { status: 500 });
