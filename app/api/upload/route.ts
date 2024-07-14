@@ -50,21 +50,23 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Error querying database" }, { status: 500 })
     };
     const formData = await request.formData();
-    const files = [formData.getAll("file")[0]] as File[];
-    const Key = generateRandomFilename(10) + "." + files[0].name.split('.')[1];
-    try {
+    const files = formData.getAll("file") as File[];
 
-        await Promise.all(
-            files.map(async (file) => {
-                const Body = (await file.arrayBuffer()) as Buffer;
-                s3.send(new PutObjectCommand({ Bucket, Key: Key, Body }));
-            })
-        );
+    if (files.length > 0) {
+        try {
+            const file = files[0]; // Get the first file
+            const Key = generateRandomFilename(10) + "." + file.name.split('.').pop();
+            const Body = Buffer.from(await file.arrayBuffer());
+
+            await s3.send(new PutObjectCommand({ Bucket, Key, Body }));
+
+            return NextResponse.json({ url: Key }, { status: 200 });
+        } catch (error) {
+            console.error("Error uploading file:", error);
+            return NextResponse.json({ error: "Error uploading file" }, { status: 500 });
+        }
+    } else {
+        return NextResponse.json({ error: "No files uploaded" }, { status: 400 });
     }
-    catch (error) {
-        console.error("Error uploading file:", error);
-        return NextResponse.json({ error: "Error uploading file" }, { status: 500 });
-    }
-    console.log("https://" + process.env.BACKEND_SERVER + "/" + Key);
-    return NextResponse.json({ url: "https://" + process.env.BACKEND_SERVER + "/" + Key, error: null }, { status: 200 });
+
 }
