@@ -117,7 +117,7 @@ export default function Home() {
       <Input
         ref={input}
         placeholder={`https://${backend}/image.png?quality=100`}
-        className={`text-lg md:w-3/4 lg:w-1/2 w-full rounded-xl h-10 border-2 ${
+        className={`text-lg md:w-3/4 lg:w-1/2 w-[90vw] m-2 rounded-xl h-10 border-2 ${
           status === "error"
             ? `border-red-400 border-2`
             : status === "success"
