@@ -162,7 +162,7 @@ export default function Home() {
       ) : (
         <>
 
-          <Button type="submit" variant={"outline"} onClick={handleSubmit}>
+          <Button type="submit"  onClick={handleSubmit}>
             Submit
           </Button>
           <div className="divider after::bg">OR</div>
@@ -205,7 +205,7 @@ export default function Home() {
 
       <Dialog>
         <DialogTrigger asChild>
-          <Button>
+          <Button variant={"secondary"}>
             <Upload className="mr-2 h-4 w-4" />
             Upload Image
           </Button>
