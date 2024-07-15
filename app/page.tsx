@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import ReactLoading from "react-loading";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "lucide-react";
+import { User, RotateCcw } from "lucide-react";
 export default function Home() {
   const [formattedImage, setFormattedImage] = useState<string>("");
   const [remoteUrl, setRemoteUrl] = useState<string>("");
@@ -125,32 +125,33 @@ export default function Home() {
   }
 
   return (
-    <main className=" flex min-h-screen flex-col items-center content-center justify-center p-24 gap-5 border-2">
+    <main className=" flex min-h-screen flex-col items-center content-center justify-center p-24 gap-5 ">
       <div className="text-6xl my-8 font-bold">Nimbus.</div>
       <Input
         ref={input}
         placeholder={`https://${backend}/image.png?quality=100`}
-        className={`text-lg md:w-3/4 lg:w-1/2 w-[90vw] m-2 rounded-xl h-10 border-2 ${
-          status === "error"
-            ? `border-red-400 border-2`
-            : status === "success"
+        className={`text-lg md:w-3/4 lg:w-1/2 w-[90vw] m-2 rounded-xl h-10 border-2 ${status === "error"
+          ? `border-red-400 border-2`
+          : status === "success"
             ? `border-green-400 border-2`
             : ""
-        }`}
+          }`}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             handleSubmit();
           }
         }}
       />
-      <Button type="submit" variant={"outline"} onClick={handleSubmit}>
-        Submit
-      </Button>
-      <div className="divider after::bg">OR</div>
       {loading ? (
-        <ReactLoading type={"spin"} color="#000" />
+        <ReactLoading type={"spin"} color="#fff" />
       ) : formattedImage !== "" && remoteUrl !== "" ? (
         <>
+          <Button size="icon" onClick={() => {
+            setFormattedImage("");
+            setRemoteUrl("");
+          }}>
+            <RotateCcw />
+          </Button>
           <img src={formattedImage} alt="Image" />
           <a href={remoteUrl} download className="download-button">
             <Button variant={"secondary"} className="bg-gray-800 text-white">
@@ -159,7 +160,13 @@ export default function Home() {
           </a>
         </>
       ) : (
-        <></>
+        <>
+
+          <Button type="submit" variant={"outline"} onClick={handleSubmit}>
+            Submit
+          </Button>
+          <div className="divider after::bg">OR</div>
+        </>
       )}
       <div className="fixed bottom-0 left-0 m-5">
         {session ? (

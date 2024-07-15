@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import { ClipboardCopy } from "lucide-react";
 import { Login } from "../component/login";
+import ReactLoading from "react-loading";
 
 async function UploadZone(
   url: string,
@@ -45,8 +46,7 @@ export function ImagePicker(props: {
     if (loading) {
       return (
         <div className="min-h-full flex flex-col items-center content-center justify-center gap-2">
-          <Loader size={100} />
-          <Text size="xl">Uploading...</Text>
+          <ReactLoading type={"spin"} color="#fff" />
         </div>
       );
     }
@@ -93,7 +93,7 @@ export function ImagePicker(props: {
                 style={{
                   width: 100,
                   height: 100,
-                  color: "#000000",
+                  color: "#ffffff",
                 }}
                 stroke={1.5}
               />
