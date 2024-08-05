@@ -9,6 +9,8 @@ import { db } from "@/lib/db";
 import { User } from "@/schema/users";
 import { eq } from "drizzle-orm";
 
+export const maxDuration = 200;
+
 
 const Bucket = process.env.BUCKET;
 const s3 = new S3Client({
