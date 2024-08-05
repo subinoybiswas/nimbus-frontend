@@ -9,7 +9,7 @@ import { db } from "@/lib/db";
 import { User } from "@/schema/users";
 import { eq } from "drizzle-orm";
 
-export const maxDuration = 200;
+export const maxDuration = 60;
 
 
 const Bucket = process.env.BUCKET;
